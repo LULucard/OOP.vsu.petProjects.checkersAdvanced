@@ -23,7 +23,11 @@ public class Game {
     }
 
     public boolean isMoveAllowed(Point s, Point f) {
-        return false; // Потом допишу
+        return false; //Чекает, доступен ли этот шаг игроку
+    }
+
+    public List<Point> allowedMoves(Point p){
+        return new ArrayList<>();//Чекает доступные шаги для шашки
     }
 
 
