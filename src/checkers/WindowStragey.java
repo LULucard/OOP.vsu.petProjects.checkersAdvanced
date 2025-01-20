@@ -24,7 +24,7 @@ public class WindowStragey extends JDialog implements PlayerStrategy {
                 int r = Integer.parseInt(rowTF.getText());
                 int c = Integer.parseInt(colTF.getText());
                 if (mm != null) {
-                    mm.makeMove(new Point(c, r));
+                    //mm.makeMove(new Point(r, c));
                     mm = null;
                     orderLabel.setText("----");
                 }

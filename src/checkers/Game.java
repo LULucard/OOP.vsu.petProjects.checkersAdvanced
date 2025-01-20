@@ -7,7 +7,6 @@ public class Game {
     private Boardable<Figure> board;
     private List<Player> players = new ArrayList<>();
     private int currentPlayerIndex = 0;
-    private int stepsCount = 0;
 
     private Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
@@ -15,7 +14,6 @@ public class Game {
 
     private void nextPlayer() {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
-        stepsCount++;
     }
 
     public Game(Boardable<Figure> board, Player a, Player b) {
@@ -24,14 +22,20 @@ public class Game {
         players.add(b);
     }
 
+    public boolean isMoveAllowed(Point s, Point f) {
+        return false; // Потом допишу
+    }
+
     private static class PBoard implements PlayerBoard {
 
         private final Boardable<Figure> board;
         private final Figure figure;
+        private final Figure qf;
 
-        public PBoard(Boardable<Figure> board, Figure figure) {
+        public PBoard(Boardable<Figure> board, Figure figure, Figure qf) {
             this.board = board;
             this.figure = figure;
+            this.qf = qf;
         }
 
         @Override
@@ -49,32 +53,37 @@ public class Game {
             Figure f = board.get(p.getX(), p.getY());
             if (f == null)
                 return Cell.EMPTY;
-            if (f == figure)
+            if ((f == figure) || (f == qf))
                 return Cell.ALLY;
             return Cell.ENEMY;
         }
+
     }
 
     private class MakeMoveImpl implements MoveMaker {
 
         @Override
-        public void makeMove(Point p) {
+        public void makeMove(Point s, Point f) {
             Player pl = getCurrentPlayer();
-            if (p != null) {
-                board.set(p.getX(), p.getY(), pl.getFigure());
+            if (isMoveAllowed(s, f)) {
+                board.set(f.getX(), f.getY(), board.get(s.getX(), s.getY()));
+                board.set(s.getX(), s.getY(), null);
                 nextPlayer();
             }
             if (isGameOver())
                 return;
             pl = getCurrentPlayer();
-            PBoard pb = new PBoard(board, pl.getFigure());
+            PBoard pb = new PBoard(board, pl.getFigure(), pl.getQueenFigure());
             getCurrentPlayer().getStrategy().makeMove(pb, new MakeMoveImpl());
         }
+
+
     }
+
 
     public void start() {
         Player pl = getCurrentPlayer();
-        PBoard pb = new PBoard(board, pl.getFigure());
+        PBoard pb = new PBoard(board, pl.getFigure(), pl.getQueenFigure());
         getCurrentPlayer().getStrategy().makeMove(pb, new MakeMoveImpl());
     }
 
