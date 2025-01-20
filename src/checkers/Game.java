@@ -26,6 +26,7 @@ public class Game {
         return false; // Потом допишу
     }
 
+
     private static class PBoard implements PlayerBoard {
 
         private final Boardable<Figure> board;
